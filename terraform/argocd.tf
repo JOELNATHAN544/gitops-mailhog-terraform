@@ -1,9 +1,11 @@
 resource "helm_release" "argocd" {
-  name       = "argocd"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argo-cd"
-  namespace  = kubernetes_namespace.argocd.metadata[0].name
-  version    = var.argocd_chart_version
+  name            = "argocd"
+  repository      = "https://argoproj.github.io/argo-helm"
+  chart           = "argo-cd"
+  namespace       = kubernetes_namespace.argocd.metadata[0].name
+  version         = var.argocd_chart_version
+  timeout         = 600
+  recreate_pods   = true
 
   values = [
     file("${path.module}/argocd-values.yaml")
