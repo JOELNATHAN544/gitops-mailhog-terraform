@@ -113,15 +113,45 @@ Port-forward the service:
 
 ```bash
 kubectl port-forward svc/argocd-server -n argocd 8080:443
-
 ```
 
-Open [**https://localhost:8080**](https://localhost:8080/)
+> **Note for VM / Headless Server Users:** If you are running this on a remote server and want to access the UI from your local machine, you must add the `--address 0.0.0.0` flag to the command. This will make it accessible over your server's network IP (e.g., your Tailscale IP).
+> 
+> ```bash
+> kubectl port-forward --address 0.0.0.0 svc/argocd-server -n argocd 8080:443
+> ```
+
+Open [**https://localhost:8080**](https://localhost:8080/) (or `https://<your-server-ip>:8080` if using the address flag).
 
 Login with:
 
 - Username: `admin`
 - Password: (from previous step)
+
+---
+
+### **✅ Step 3a: (Optional) Access Argo CD via CLI**
+
+For command-line users, you can authenticate and interact with the Argo CD API. Make sure the port-forward command from Step 3 is running in a separate terminal.
+
+1.  **Get Admin Password and Store It:**
+    ```bash
+    ARGO_PASSWORD=$(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode)
+    ```
+
+2.  **Get a Session Token:**
+    This command sends your credentials and saves the returned session token to a variable named `TOKEN`.
+    ```bash
+    TOKEN=$(curl -k -s -X POST -d '{"username":"admin","password":"'"$ARGO_PASSWORD"'"}' https://localhost:8080/api/v1/session | jq -r .token)
+    ```
+    *(Note: This command uses `jq` to parse the JSON response. You may need to install it, e.g., `brew install jq` or `sudo apt-get install jq`)*
+
+3.  **List Applications:**
+    Use the token in an `Authorization` header to make authenticated API calls.
+    ```bash
+    curl -k -s -H "Authorization: Bearer $TOKEN" https://localhost:8080/api/v1/applications
+    ```
+    *(This will return an empty list until you complete Step 5).*
 
 ---
 
