@@ -1,5 +1,2 @@
-resource "kubernetes_namespace" "argocd" {
-  metadata {
-    name = var.argocd_namespace
-  }
-}
+# This file is intentionally left blank.
+# Namespace creation is handled by the helm_release resource in argocd.tf.
