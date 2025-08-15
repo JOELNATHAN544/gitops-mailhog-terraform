@@ -1,2 +1,2 @@
 # gitops-mailhog-terraform
-Practical Class
+### Practical Class
