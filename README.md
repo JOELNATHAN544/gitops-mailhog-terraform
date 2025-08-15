@@ -1,1 +1,1 @@
-# gitops-mailhog-terraform
+# gitops-mailhog-terraform workshop
